@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pago realizado</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f5f7;
+      color: #111;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      margin-top: 0;
+      color: #555;
+    }
+    button {
+      margin-top: 1.5rem;
+      padding: 0.9rem 1.8rem;
+      border-radius: 999px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+      background: #007aff;
+      color: white;
+      box-shadow: 0 8px 20px rgba(0, 122, 255, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <h1>✅ Pago realizado</h1>
+  <p>Si no se escucha el sonido, toca el botón.</p>
+
+  <button id="playBtn">Reproducir sonido</button>
+
+  <!-- importante: el nombre del archivo debe coincidir -->
+  <audio id="pagoAudio" src="ApplePay.mp3"></audio>
+
+  <script>
+    const audio = document.getElementById('pagoAudio');
+    const btn = document.getElementById('playBtn');
+
+    // Intento de autoplay al cargar
+    window.addEventListener('load', () => {
+      audio.play().catch(() => {
+        // Si el navegador bloquea autoplay, no pasa nada,
+        // el usuario puede tocar la pantalla o el botón.
+      });
+    });
+
+    // Si toca el botón
+    btn.addEventListener('click', () => {
+      audio.currentTime = 0;
+      audio.play();
+    });
+
+    // Si toca cualquier parte de la pantalla
+    document.body.addEventListener('click', () => {
+      audio.currentTime = 0;
+      audio.play();
+    }, { once: true });
+  </script>
+</body>
+</html>
