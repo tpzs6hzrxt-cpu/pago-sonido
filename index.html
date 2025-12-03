@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Pago realizado</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Canje de regalo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
     body {
@@ -17,18 +17,23 @@
       background: #f5f5f7;
       color: #111;
       text-align: center;
+      padding: 0 1.5rem;
     }
+
     h1 {
       font-size: 2rem;
       margin-bottom: 0.5rem;
     }
+
     p {
       margin-top: 0;
       color: #555;
+      font-size: 1rem;
     }
-    button {
-      margin-top: 1.5rem;
-      padding: 0.9rem 1.8rem;
+
+    #canjearBtn {
+      margin-top: 2rem;
+      padding: 0.9rem 2.2rem;
       border-radius: 999px;
       border: none;
       font-size: 1rem;
@@ -37,40 +42,77 @@
       color: white;
       box-shadow: 0 8px 20px rgba(0, 122, 255, 0.3);
     }
+
+    #canjearBtn:active {
+      transform: scale(0.97);
+    }
+
+    #loader {
+      margin-top: 1.8rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 4px solid #d0d0d5;
+      border-top-color: #007aff;
+      animation: spin 0.9s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>✅ Pago realizado</h1>
-  <p>Si no se escucha el sonido, toca el botón.</p>
+  <h1 id="title">Canje de regalo</h1>
+  <p id="message">Pulse el botón para procesar su canje.</p>
 
-  <button id="playBtn">Reproducir sonido</button>
+  <button id="canjearBtn">Canjear regalo</button>
+  <div id="loader"></div>
 
-  <!-- importante: el nombre del archivo debe coincidir -->
+  <!-- El nombre del archivo debe coincidir con el de tu repo -->
   <audio id="pagoAudio" src="ApplePay.mp3"></audio>
 
   <script>
     const audio = document.getElementById('pagoAudio');
-    const btn = document.getElementById('playBtn');
+    const btn = document.getElementById('canjearBtn');
+    const title = document.getElementById('title');
+    const message = document.getElementById('message');
+    const loader = document.getElementById('loader');
 
-    // Intento de autoplay al cargar
-    window.addEventListener('load', () => {
-      audio.play().catch(() => {
-        // Si el navegador bloquea autoplay, no pasa nada,
-        // el usuario puede tocar la pantalla o el botón.
-      });
-    });
+    function mostrarGracias() {
+      loader.style.display = 'none';
+      title.textContent = '✅ ¡Canje realizado!';
+      message.textContent = 'Gracias por su canje.';
+    }
 
-    // Si toca el botón
     btn.addEventListener('click', () => {
-      audio.currentTime = 0;
-      audio.play();
-    });
+      // Cambia a estado de "procesando"
+      btn.style.display = 'none';
+      title.textContent = 'Procesando canje…';
+      message.textContent = 'Por favor, espere un momento.';
+      loader.style.display = 'block';
 
-    // Si toca cualquier parte de la pantalla
-    document.body.addEventListener('click', () => {
+      // Reproducir sonido (vinculado al toque, así no lo bloquea el navegador)
       audio.currentTime = 0;
-      audio.play();
-    }, { once: true });
+      audio.play().catch(() => {
+        // Si algo falla, igual mostraremos el mensaje de gracias
+      });
+
+      // Cuando termine el audio, mostramos el mensaje de gracias
+      const fallback = setTimeout(mostrarGracias, 5000); // por si el evento 'ended' no salta
+
+      audio.addEventListener(
+        'ended',
+        () => {
+          clearTimeout(fallback);
+          mostrarGracias();
+        },
+        { once: true }
+      );
+    });
   </script>
 </body>
 </html>
